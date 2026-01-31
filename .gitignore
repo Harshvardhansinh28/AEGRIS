@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+env/
+
+# Data (do not commit large files)
+datasets/raw/*
+datasets/processed/*
+!datasets/**/.gitkeep
+
+# Models
+models/checkpoints/*
+!models/**/.gitkeep
+
+# Logs
+logs/
+mlruns/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
