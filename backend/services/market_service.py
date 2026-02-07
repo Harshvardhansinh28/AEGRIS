@@ -1,21 +1,23 @@
 import os
 import requests
 from typing import Any
-from datetime import datetime
+from datetime import datetime, timedelta
 
-# Load API key from environment
 FINNHUB_API_KEY = os.getenv("FINNHUB_API_KEY")
 BASE_URL = "https://finnhub.io/api/v1"
-
-# Debug (remove later)
-print("Loaded Finnhub Key:", FINNHUB_API_KEY)
 
 INDICES = ["^GSPC", "^IXIC", "^DJI"]
 WATCHLIST = ["AAPL", "MSFT", "GOOGL", "AMZN", "META", "NVDA", "TSLA", "JPM"]
 
+# -----------------------------
+# 🔥 Simple in-memory cache
+# -----------------------------
+_CACHE_DATA: dict[str, Any] | None = None
+_CACHE_TIME: datetime | None = None
+CACHE_TTL = 60  # seconds
+
 
 def _map_symbol(symbol: str) -> str:
-    """Convert index symbols to ETFs supported by Finnhub free tier."""
     return (
         symbol.replace("^GSPC", "SPY")
               .replace("^IXIC", "QQQ")
@@ -30,7 +32,6 @@ def _fetch_quote(symbol: str) -> dict[str, Any] | None:
             return None
 
         url = f"{BASE_URL}/quote"
-
         params = {
             "symbol": _map_symbol(symbol),
             "token": FINNHUB_API_KEY
@@ -41,7 +42,6 @@ def _fetch_quote(symbol: str) -> dict[str, Any] | None:
 
         data = response.json()
 
-        # Finnhub returns empty data if symbol invalid
         if not data or data.get("c") is None:
             return None
 
@@ -53,7 +53,7 @@ def _fetch_quote(symbol: str) -> dict[str, Any] | None:
             "changePercent": round(data.get("dp", 0), 2),
             "high": round(data.get("h", 0), 2),
             "low": round(data.get("l", 0), 2),
-            "volume": 0,  # Free tier doesn't give volume in this endpoint
+            "volume": 0,
         }
 
     except Exception as e:
@@ -71,6 +71,13 @@ def get_quotes(symbols: list[str]) -> list[dict[str, Any]]:
 
 
 def get_market_summary() -> dict[str, Any]:
+    global _CACHE_DATA, _CACHE_TIME
+
+    # ✅ Return cached data if still valid
+    if _CACHE_DATA and _CACHE_TIME:
+        if datetime.utcnow() - _CACHE_TIME < timedelta(seconds=CACHE_TTL):
+            return _CACHE_DATA
+
     symbols = list(dict.fromkeys(INDICES + WATCHLIST))
     quotes = get_quotes(symbols)
 
@@ -83,7 +90,7 @@ def get_market_summary() -> dict[str, Any]:
 
     sp500 = next((q for q in quotes if q["symbol"] == "^GSPC"), None)
 
-    return {
+    summary = {
         "indices": indices,
         "watchlist": watchlist,
         "gainers": gainers,
@@ -91,6 +98,12 @@ def get_market_summary() -> dict[str, Any]:
         "sp500": sp500,
         "timestamp": datetime.utcnow().isoformat() + "Z",
     }
+
+    # ✅ Save to cache
+    _CACHE_DATA = summary
+    _CACHE_TIME = datetime.utcnow()
+
+    return summary
 
 
 def get_quote(symbol: str) -> dict[str, Any] | None:
