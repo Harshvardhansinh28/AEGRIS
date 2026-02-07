@@ -12,6 +12,7 @@ app = FastAPI(title="AEGRIS API", description="Institutional Trading Agent API",
 origins = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
+      "https://aegris33.vercel.app",
 ]
 
 app.add_middleware(
