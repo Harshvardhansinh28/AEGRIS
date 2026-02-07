@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from backend.routes import simulation, market, chat
-from backend.services.ml.service import simulation_service
+from routes import simulation, market, chat
+from services.ml.service import simulation_service
 
 app = FastAPI(title="AEGRIS API", description="Institutional Trading Agent API", version="1.0.0")
 

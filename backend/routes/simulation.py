@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException
-from backend.services.ml.service import simulation_service
+from services.ml.service import simulation_service
 
 router = APIRouter(prefix="/api/simulation", tags=["simulation"])
 

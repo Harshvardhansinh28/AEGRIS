@@ -4,7 +4,7 @@ from typing import Any
 
 from fastapi import APIRouter, HTTPException
 
-from backend.services.market_service import get_market_summary, get_quote, get_quotes
+from services.market_service import get_market_summary, get_quote, get_quotes
 
 router = APIRouter(prefix="/api/chat", tags=["chat"])
 

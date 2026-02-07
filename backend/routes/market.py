@@ -1,7 +1,7 @@
 """Market data API – real-time quotes and summary."""
 from fastapi import APIRouter, HTTPException, Query
 
-from backend.services.market_service import (
+from services.market_service import (
     get_market_summary,
     get_quote,
     get_quotes,
