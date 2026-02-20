@@ -13,9 +13,13 @@ import {
   stepSimulation,
   getSimulationState,
   getMarketSummary,
-  type SimulationState,
-  type MarketSummary,
+  SimulationState,
+  MarketSummary,
 } from '@/lib/api';
+
+/* =============================
+   Types
+============================= */
 
 type DataContextType = {
   simulation: SimulationState | null;
@@ -26,7 +30,15 @@ type DataContextType = {
   stop: () => void;
 };
 
-const DataContext = createContext<DataContextType | null>(null);
+/* =============================
+   Context
+============================= */
+
+const DataContext = createContext<DataContextType | undefined>(undefined);
+
+/* =============================
+   Provider
+============================= */
 
 export function DataProvider({ children }: { children: React.ReactNode }) {
   const [simulation, setSimulation] = useState<SimulationState | null>(null);
@@ -34,24 +46,50 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   const [market, setMarket] = useState<MarketSummary | null>(null);
   const [isRunning, setIsRunning] = useState(false);
 
-  const simInterval = useRef<NodeJS.Timeout | null>(null);
+  // IMPORTANT: Use browser-safe type
+  const simInterval = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  /* -------- INITIAL LOAD -------- */
+  /* ---------- Initial Load ---------- */
+
   useEffect(() => {
-    getSimulationState().then(setSimulation).catch(console.error);
-    getMarketSummary().then(setMarket).catch(console.error);
+    async function loadInitial() {
+      try {
+        const sim = await getSimulationState();
+        setSimulation(sim);
+      } catch (err) {
+        console.error('Simulation load failed:', err);
+      }
 
-    const marketTimer = setInterval(() => {
-      getMarketSummary().then(setMarket).catch(console.error);
+      try {
+        const mk = await getMarketSummary();
+        setMarket(mk);
+      } catch (err) {
+        console.error('Market load failed:', err);
+      }
+    }
+
+    loadInitial();
+
+    const marketTimer = setInterval(async () => {
+      try {
+        const mk = await getMarketSummary();
+        setMarket(mk);
+      } catch (err) {
+        console.error('Market refresh failed:', err);
+      }
     }, 60_000);
 
     return () => clearInterval(marketTimer);
   }, []);
 
-  /* -------- SIMULATION LOOP -------- */
+  /* ---------- Simulation Loop ---------- */
+
   useEffect(() => {
     if (!isRunning) {
-      if (simInterval.current) clearInterval(simInterval.current);
+      if (simInterval.current) {
+        clearInterval(simInterval.current);
+        simInterval.current = null;
+      }
       return;
     }
 
@@ -59,27 +97,40 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
       try {
         const next = await stepSimulation();
         setSimulation(next);
-        setHistory((h) => [...h, next].slice(-120));
-        if (!next.running) setIsRunning(false);
-      } catch (e) {
-        console.error(e);
+        setHistory((prev) => [...prev, next].slice(-120));
+
+        if (!next.running) {
+          setIsRunning(false);
+        }
+      } catch (err) {
+        console.error('Step failed:', err);
         setIsRunning(false);
       }
     }, 250);
 
     return () => {
-      if (simInterval.current) clearInterval(simInterval.current);
+      if (simInterval.current) {
+        clearInterval(simInterval.current);
+        simInterval.current = null;
+      }
     };
   }, [isRunning]);
 
-  /* -------- ACTIONS -------- */
+  /* ---------- Actions ---------- */
+
   const start = async () => {
-    await startSimulation();
-    setHistory([]);
-    setIsRunning(true);
+    try {
+      await startSimulation();
+      setHistory([]);
+      setIsRunning(true);
+    } catch (err) {
+      console.error('Start failed:', err);
+    }
   };
 
-  const stop = () => setIsRunning(false);
+  const stop = () => {
+    setIsRunning(false);
+  };
 
   return (
     <DataContext.Provider
@@ -97,9 +148,14 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-/* -------- SAFE HOOK -------- */
+/* =============================
+   Hook
+============================= */
+
 export function useData() {
-  const ctx = useContext(DataContext);
-  if (!ctx) throw new Error('useData must be used inside DataProvider');
-  return ctx;
+  const context = useContext(DataContext);
+  if (!context) {
+    throw new Error('useData must be used inside DataProvider');
+  }
+  return context;
 }
