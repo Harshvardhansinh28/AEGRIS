@@ -1,5 +1,86 @@
-# AegisRL™ – Enterprise Adaptive RL Portfolio Platform
+<div align="center">
 
+<img width="180" height="220"
+src="https://github.com/user-attachments/assets/88fa5098-24b1-4ece-87df-95eb920ea721"
+alt="SURE ProEd Logo"/>
+
+# SURE ProEd (formerly SURE Trust)
+### Skill Upgradation for Rural Youth Empowerment Trust
+
+</div>
+
+---
+
+# 👨‍🎓 Student Details
+
+- **Name:** Harshvardhansinh Vaghela
+- **Email ID:** vaghelahv333@gmail.com
+- **College Name:** SAL Engineering And Teachnical Institute
+- **Branch / Specialization:** Computer Enginnering
+- **College ID:** 
+
+---
+
+# 📚 Course Details
+
+- **Course Opted:** Data science with Python
+- **Instructor Name:** Mr. Gaurav Patel
+- **Duration:** July 2025 - March 2026
+
+---
+
+# 🧑‍🏫 Trainer Details
+
+- **Trainer Name:** Gaurav Patel
+- **Trainer Email ID:**  gaurav.patel.gpp@gmail.com
+- **Trainer Designation:**Tutor
+
+---
+
+# 📑 Internship Summary
+
+## Overall Learning
+
+During this internship, I gained hands-on experience in building a full-stack AI-driven application from concept to deployment. I strengthened my understanding of reinforcement learning, backend API development, and frontend integration while working on a real-world trading intelligence platform. The internship enhanced my problem-solving abilities, system design thinking, debugging skills, and documentation practices. Additionally, collaborating within a structured program improved my communication, time management, and professional discipline. Overall, this experience significantly contributed to both my technical growth and industry readiness.
+
+
+## Projects Completed
+
+- Project 1: Ai rockfall Prediction system
+- Project 2: Camera operations
+- Project 3: AegisRL™ – Enterprise Adaptive RL Portfolio Platform
+
+---
+
+## Learnings from LST & SST
+
+(Write your LST and SST learnings here)
+
+---
+
+## Community Services
+
+(Write your community service activities here)
+
+---
+
+## Certificate
+
+(Add your certificate image link here)
+
+---
+
+## Acknowledgments
+
+- ___________________________
+- ___________________________
+- SURE ProEd Team
+
+---
+
+---
+
+# AegisRL™ – Enterprise Adaptive RL Portfolio Platform
 Cloud-native AI trading platform: deep reinforcement learning for dynamic portfolio allocation, regime adaptation, risk constraints, and full explainability. Built with a **FastAPI** backend and **Next.js** frontend.
 
 ---
