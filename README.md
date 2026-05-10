@@ -53,14 +53,18 @@ During this internship, I gained hands-on experience in building a full-stack AI
 ---
 
 ## Learnings from LST & SST
-
-(Write your LST and SST learnings here)
+1. Learned good comunication skills
+2. Learned the practical and strategic usage of ai
+3. Learned to build good resume
+4. Learned how to approach for any problem
+   
 
 ---
 
 ## Community Services
 
-(Write your community service activities here)
+1. Tree plantation.
+2. Helping the needy senior citizens
 
 ---
 
